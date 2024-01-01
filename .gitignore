@@ -1,3 +1,9 @@
+# Downloaded folders and files
+unit08-large-language-models/8.2-bag-of-words/aclImdb
+unit08-large-language-models/aclImdb
+unit08-large-language-models/8.2-bag-of-words/logs
+unit08-large-language-models/aclImdb_v1.tar.gz
+
 .DS_Store
 
 # Byte-compiled / optimized / DLL files
