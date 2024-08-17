@@ -15,3 +15,15 @@ class MyDataset(Dataset):
 4. you do not need model = model.eval()
 
 5. plot_boundary
+
+
+26/08/24
+
+1, Best coding practice - do not specify variable you don't use
+
+all_x = []
+for x, _ in train_loader:
+    all_x.append(x)
+    
+train_std = torch.concat(all_x).std(dim=0)
+train_mean = torch.concat(all_x).mean(dim=0)
