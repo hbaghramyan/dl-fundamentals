@@ -19,7 +19,8 @@ class MyDataset(Dataset):
 
 26/08/24
 
-1, Best coding practice - do not specify variable you don't use
+1. Best coding practice - do not specify variable you don't use
+
 
 all_x = []
 for x, _ in train_loader:
@@ -27,3 +28,15 @@ for x, _ in train_loader:
     
 train_std = torch.concat(all_x).std(dim=0)
 train_mean = torch.concat(all_x).mean(dim=0)
+
+2. explain why the formula has this concrete form
+
+![alt text](image.png)
+
+
+$H(p, q) = -\sum_i p_i \log q_i = -y \log \hat{y} - (1 - y) \log(1 - \hat{y}).$
+
+
+https://en.wikipedia.org/wiki/Cross-entropy
+
+https://en.wikipedia.org/wiki/Entropy_(information_theory)
