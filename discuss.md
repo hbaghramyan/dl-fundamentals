@@ -45,7 +45,3 @@ https://en.wikipedia.org/wiki/Entropy_(information_theory)
 
 4. plt.imshow(np.transpose(torchvision.utils.make_grid(images[:64], padding=4, pad_value=0.5, normalize=True), (1, 2, 0)))
 
-padding - specifies the amount of space (in pixels) to insert between the images in the grid.
-pad_value - specifies the pixel value used to fill the padding spaces between the images.
-normalize (bool, optional): If True, shift the image to the range (0, 1),
-by the min and max values specified by ``value_range``. Default: ``False``.
