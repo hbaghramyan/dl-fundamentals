@@ -185,3 +185,11 @@ for epoch in range(num_epochs):
 
 end_time = time.time()
 print(f"Total execution time: {end_time - start_time:.2f} seconds")
+
+train_acc = compute_accuracy(model=model, dataloader=train_loader)
+val_acc = compute_accuracy(model=model, dataloader=val_loader)
+test_acc = compute_accuracy(model=model, dataloader=test_loader)
+
+print(f"Train Acc {train_acc*100:.2f}%")
+print(f"Val Acc: {val_acc*100:.2f}%")
+print(f"Test Acc: {test_acc*100:.2f}%")
