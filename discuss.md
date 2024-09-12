@@ -45,3 +45,79 @@ https://en.wikipedia.org/wiki/Entropy_(information_theory)
 
 4. plt.imshow(np.transpose(torchvision.utils.make_grid(images[:64], padding=4, pad_value=0.5, normalize=True), (1, 2, 0)))
 
+16/09/24
+
+1. [__name__ == "__main__"](https://builtin.com/articles/name-python#:~:text=%E2%80%9CIf%20__name__%3D%3D%20',main%20method%20should%20be%20executed.&text=If%20you%20are%20new%20to,or%20without%20a%20main%20method.) in python
+
+2. Implications with multiprocessing
+
+    Let’s break down the behavior of Python's multiprocessing on macOS and Windows more clearly, focusing on why not using the `if __name__ == "__main__":` block can lead to problems.
+
+    ### Understanding Multiprocessing and Script Execution
+
+    When using multiprocessing in Python (like when you set `num_workers > 0` in a `DataLoader`), the operating system needs to create new processes to handle these additional tasks.
+
+    1. **Linux (Fork Method):**
+    - On Linux, the new processes are created using the fork method.
+    - This method duplicates the parent process, including its current state (variables, code execution point, etc.).
+    - No re-importing of the script occurs, so the new process doesn't execute the script from the start.
+
+    2. **macOS and Windows (Spawn Method):**
+    - On macOS and Windows, the default method for creating new processes is spawn.
+    - This method starts a brand new, fresh Python interpreter process.
+    - The new process needs to know what code to run, so it **re-imports the script** that created it.
+
+    ### Why the `if __name__ == "__main__":` Block is Crucial
+
+    When the new interpreter spawns (on macOS/Windows), it starts by re-importing your script to understand what it should execute. Here’s what happens step-by-step if your script doesn't use `if __name__ == "__main__":`:
+
+    1. **Script Import:** When the new process starts, it imports your script, running from the top.
+    
+    2. **Uncontrolled Execution:** If the DataLoader and dataset creation code is outside of `if __name__ == "__main__":`, it runs as soon as the script is imported, not just when intended.
+
+    3. **Recursive Spawning:** Because the DataLoader with `num_workers > 0` creates new processes, those processes will also re-import and re-execute the script from the top, trying to create their own DataLoader instances.
+
+    4. **Infinite Loop:** This leads to a chain reaction where every new process spawns more processes, which again import and execute the script, trying to spawn even more processes. This results in infinite recursion of process creation.
+
+    ### How the `if __name__ == "__main__":` Block Prevents This
+
+    - The `if __name__ == "__main__":` block ensures that certain code only runs when the script is executed directly, not when it is imported.
+    - When a new process spawns and imports the script, it does not execute the code inside `if __name__ == "__main__":`, preventing the recursive spawning issue.
+    
+    For example:
+
+    ```python
+    if __name__ == "__main__":
+        # This code will only run when the script is executed directly.
+        train_loader = DataLoader(...)
+    ```
+
+    In a new process, this block is ignored because `__name__` is not `"__main__"` (it’s the module name). This prevents unintended and repeated execution of the DataLoader creation code, keeping the multiprocessing controlled and functional.
+
+    ### Key Point
+
+    The `if __name__ == "__main__":` block ensures that multiprocessing doesn’t lead to runaway process creation on platforms that use the spawn method, making your script work correctly and efficiently on all operating systems.
+
+3. 
+    data_transforms = {
+    "train": transforms.Compose(
+        [
+            transforms.Resize(32),
+            transforms.RandomCrop((28, 28)),
+            transforms.ToTensor(),
+            # normalize images to [-1, 1] range
+            transforms.Normalize((0.5,), (0.5)),
+        ]
+    ),
+    "test": transforms.Compose(
+        [
+            transforms.Resize(32),
+            transforms.CenterCrop((28, 28)),
+            transforms.ToTensor(),
+            # normalize images to [-1, 1] range
+            transforms.Normalize((0.5,), (0.5,)),
+        ]
+    ),
+}
+
+
