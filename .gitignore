@@ -6,6 +6,10 @@ unit08-large-language-models/aclImdb_v1.tar.gz
 mnist
 mnist-pngs/test
 mnist-pngs/train
+mnist-pngs/train.csv
+mnist-pngs/test.csv
+mnist-pngs/new_train.csv
+mnist-pngs/new_val.csv
 
 .DS_Store
 
