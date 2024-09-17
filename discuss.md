@@ -99,25 +99,34 @@ https://en.wikipedia.org/wiki/Entropy_(information_theory)
     The `if __name__ == "__main__":` block ensures that multiprocessing doesn’t lead to runaway process creation on platforms that use the spawn method, making your script work correctly and efficiently on all operating systems.
 
 3. 
-    data_transforms = {
-    "train": transforms.Compose(
-        [
-            transforms.Resize(32),
-            transforms.RandomCrop((28, 28)),
-            transforms.ToTensor(),
-            # normalize images to [-1, 1] range
-            transforms.Normalize((0.5,), (0.5)),
-        ]
-    ),
-    "test": transforms.Compose(
-        [
-            transforms.Resize(32),
-            transforms.CenterCrop((28, 28)),
-            transforms.ToTensor(),
-            # normalize images to [-1, 1] range
-            transforms.Normalize((0.5,), (0.5,)),
-        ]
-    ),
-}
+
+The `transforms.Normalize((0.5,), (0.5,))` step is included to normalize your image data so that its pixel values fall within the \([-1, 1]\) range instead of the default \([0, 1]\) range produced by `transforms.ToTensor()`. Here's why this is beneficial:
+
+* **Normalization Process**: The `transforms.Normalize(mean, std)` function adjusts the pixel values using the formula:
+
+   \[
+   \text{output} = \frac{\text{input} - \text{mean}}{\text{std}}
+   \]
+
+   By setting `mean` to \((0.5,)\) and `std` to \((0.5,)\), the transformation becomes:
+
+   \[
+   \text{output} = \frac{\text{input} - 0.5}{0.5} = 2 \times \text{input} - 1
+   \]
+
+   This maps the input pixel values from the \([0, 1]\) range to \([-1, 1]\).
+
+* **Benefits of \([-1, 1]\) Range**:
+   - **Neural Network Performance**: Many neural network architectures, especially those using activation functions like `tanh`, perform better when inputs are centered around zero. This can lead to faster convergence during training.
+   - **Stability**: Normalizing data can improve numerical stability and make the training process less sensitive to the scale of input features.
+   - **Consistency**: If pre-trained models (e.g., those trained on ImageNet) expect inputs in a specific range, normalizing your data accordingly ensures compatibility.
+
+* **Channel-wise Normalization**: The `(0.5,)` tuple indicates that this normalization is applied to each channel individually. For grayscale images (single-channel), this is straightforward. For RGB images, you would provide a mean and standard deviation for each channel.
+
+**In summary**, the `transforms.Normalize((0.5,), (0.5,))` step scales your image data to a \([-1, 1]\) range, which is often preferred for training neural networks due to improved performance and stability.
+
+**Answer:**
+
+Because it scales image pixels from [0, 1] to [–1, 1]; using Normalize((0.5,), (0.5,)) centers and scales the data so neural networks train better with inputs in the [–1, 1] range
 
 
